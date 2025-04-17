@@ -1,0 +1,31 @@
+﻿@page
+@model Cyber_Alerts_Monitoring_System.Pages.LoginModel
+@{
+	ViewData["Title"] = "Login";
+}
+
+
+<h1>Login</h1>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+	<div class="alert alert-danger">
+		@ViewData["ErrorMessage"]
+	</div>
+}
+
+<div class="row">
+	<div class="col-md-4">
+		<form method="post">
+			<div class="form-group">
+				<label for="emp_code">Employee Code</label>
+				<input type="text" class="form-control" id="emp_code" name="emp_code"/>
+			</div>
+			<div class="form-group">
+				<label for="password">Password</label>
+				<input type="text" name="password" class="form-control" id="password"/>
+			</div>
+			<button type="submit" class="btn btn-primary">Login</button>
+		</form>
+	</div>
+</div>

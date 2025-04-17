@@ -1,0 +1,51 @@
+﻿@page
+@model Cyber_Alerts_Monitoring_System.Pages.CyberAlertsCentralModel
+@{
+	ViewData["Title"] = "Cyber Alerts - Corporate Office";
+}
+
+
+<h1>Cyber Alerts - Corporate Office</h1>
+<form method="post">
+    <div class="form-group">
+        <label for="received_date">Received Date</label>
+        <input type="datetime-local" class="form-control" id="received_date" name="received_date">
+    </div>
+    <div class="form-group">
+        <label for="sender_details">Sender Details</label>
+        <input type="text" class="form-control" id="sender_details" name="sender_details" maxlength="50">
+    </div>
+    <div class="form-group">
+        <label for="incident_date">Incident Date</label>
+        <input type="datetime-local" class="form-control" id="incident_date" name="incident_date">
+    </div>
+    <div class="form-group">
+        <label for="entry_date">Entry Date</label>
+        <input type="datetime-local" class="form-control" id="entry_date" name="entry_date">
+    </div>
+    <div class="form-group">
+        <label for="email_date">Email Date (Optional)</label>
+        <input type="datetime-local" class="form-control" id="email_date" name="email_date">
+    </div>
+    <div class="form-group">
+        <label for="pertaining_to_unit">Pertaining To Unit</label>
+        <input type="text" class="form-control" id="pertaining_to_unit" name="pertaining_to_unit" maxlength="50">
+    </div>
+    <div class="form-group">
+        <label for="affected_sail_ip">Affected SAIL IP(s)</label>
+        <input type="text" class="form-control" id="affected_sail_ip" name="affected_sail_ip">
+    </div>
+    <div class="form-group">
+        <label for="affected_port">Affected Port(s)</label>
+        <input type="number" class="form-control" id="affected_port" name="affected_port">
+    </div>
+    <div class="form-group">
+        <label for="malicious_ip">Malicious IP(s)</label>
+        <input type="text" class="form-control" id="malicious_ip" name="malicious_ip">
+    </div>
+    <div class="form-group">
+        <label for="alert_details">Alert Details</label>
+        <textarea class="form-control" id="alert_details" name="alert_details" maxlength="250"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Alert</button>
+</form>
