@@ -1,20 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Http;
 
-namespace Cyber_Alerts_Monitoring_System.Pages
+namespace WebApplication1.Pages // Replace YourWebAppName with your actual namespace
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(IHttpContextAccessor httpContextAccessor)
         {
-            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public void OnGet()
-        {
+        public string EmpCode { get; set; } // Public property to hold emp_code
 
+        public IActionResult OnGet()
+        {
+            string center = _httpContextAccessor.HttpContext.Session.GetString("Center");
+            EmpCode = _httpContextAccessor.HttpContext.Session.GetString("EmpCode"); // Retrieve emp_code
+
+            if (center == "CO")
+            {
+                return RedirectToPage("/CyberAlertsCentral");
+            }
+            else if (center == "Plant")
+            {
+                return RedirectToPage("/CyberAlertsLocal");
+            }
+            else
+            {
+                return RedirectToPage("/Login");
+            }
         }
     }
 }
