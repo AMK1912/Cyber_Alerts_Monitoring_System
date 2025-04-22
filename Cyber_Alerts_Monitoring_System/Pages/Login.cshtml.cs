@@ -33,21 +33,21 @@ namespace Cyber_Alerts_Monitoring_System.Pages
             }
 
             if (emp_code == "COUser" && password == "COPassword")
-{
-    Console.WriteLine("Authentication successful for COUser");
-    _httpContextAccessor.HttpContext.Session.SetString("Center", "CO");
-    _httpContextAccessor.HttpContext.Session.SetString("EmpCode", emp_code);
-    Console.WriteLine("Redirecting to /Index from COUser login"); // Add this line
-    return RedirectToPage("/Index");
-}
-else if (emp_code == "PlantUser" && password == "PlantPassword")
-{
-    Console.WriteLine("Authentication successful for PlantUser");
-    _httpContextAccessor.HttpContext.Session.SetString("Center", "Plant");
-    _httpContextAccessor.HttpContext.Session.SetString("EmpCode", emp_code);
-    Console.WriteLine("Redirecting to /Index from PlantUser login"); // Add this line
-    return RedirectToPage("/Index");
-}
+            {
+                Console.WriteLine("Authentication successful for COUser");
+                _httpContextAccessor.HttpContext.Session.SetString("Center", "CO");
+                _httpContextAccessor.HttpContext.Session.SetString("EmpCode", emp_code);
+                Console.WriteLine("Redirecting to /Index from COUser login"); // Add this line
+                return RedirectToPage("/Index");
+            }
+            else if (emp_code == "PlantUser" && password == "PlantPassword")
+            {
+                Console.WriteLine("Authentication successful for PlantUser");
+                _httpContextAccessor.HttpContext.Session.SetString("Center", "Plant");
+                _httpContextAccessor.HttpContext.Session.SetString("EmpCode", emp_code);
+                Console.WriteLine("Redirecting to /Index from PlantUser login"); // Add this line
+                return RedirectToPage("/Index");
+            }
 
             else
             {
