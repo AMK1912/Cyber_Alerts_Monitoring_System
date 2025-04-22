@@ -33,17 +33,22 @@ namespace Cyber_Alerts_Monitoring_System.Pages
             }
 
             if (emp_code == "COUser" && password == "COPassword")
-            {
-                // Simulate successful login for Corporate Office
-                _httpContextAccessor.HttpContext.Session.SetString("Center", "CO");
-                return RedirectToPage("/Index");
-            }
-            else if (emp_code == "PlantUser" && password == "PlantPassword")
-            {
-                // Simulate successful login for a Plant/Unit
-                _httpContextAccessor.HttpContext.Session.SetString("Center", "Plant");
-                return RedirectToPage("/Index");
-            }
+{
+    Console.WriteLine("Authentication successful for COUser");
+    _httpContextAccessor.HttpContext.Session.SetString("Center", "CO");
+    _httpContextAccessor.HttpContext.Session.SetString("EmpCode", emp_code);
+    Console.WriteLine("Redirecting to /Index from COUser login"); // Add this line
+    return RedirectToPage("/Index");
+}
+else if (emp_code == "PlantUser" && password == "PlantPassword")
+{
+    Console.WriteLine("Authentication successful for PlantUser");
+    _httpContextAccessor.HttpContext.Session.SetString("Center", "Plant");
+    _httpContextAccessor.HttpContext.Session.SetString("EmpCode", emp_code);
+    Console.WriteLine("Redirecting to /Index from PlantUser login"); // Add this line
+    return RedirectToPage("/Index");
+}
+
             else
             {
                 ViewData["ErrorMessage"] = "Invalid Emp Code or Password";
