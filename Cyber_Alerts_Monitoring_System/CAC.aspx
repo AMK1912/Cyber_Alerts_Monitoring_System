@@ -40,6 +40,56 @@
                 <asp:TextBox ID="txtAlertDateTime" runat="server" TextMode="DateTimeLocal" CssClass="form-control"></asp:TextBox>
             </div>
 
+            <div class="form-group">
+                <label for="txtReceivedDateCentral">Received Date:</label>
+                <asp:TextBox ID="txtReceivedDateCentral" runat="server" TextMode="DateTimeLocal" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtSenderDetailsCentral">Sender Details:</label>
+                <asp:TextBox ID="txtSenderDetailsCentral" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtIncidentDateCentral">Incident Date:</label>
+                <asp:TextBox ID="txtIncidentDateCentral" runat="server" TextMode="DateTimeLocal" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtEntryDateCentral">Entry Date:</label>
+                <asp:TextBox ID="txtEntryDateCentral" runat="server" TextMode="DateTimeLocal" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtEmailDateCentral">Email Date:</label>
+                <asp:TextBox ID="txtEmailDateCentral" runat="server" TextMode="DateTimeLocal" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtPertainingToUnitCentral">Pertaining To Unit:</label>
+                <asp:TextBox ID="txtPertainingToUnitCentral" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtAffectedSailIPCentral">Affected SAIL IP:</label>
+                <asp:TextBox ID="txtAffectedSailIPCentral" runat="server" TextMode="Number" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtAffectedPortCentral">Affected Port:</label>
+                <asp:TextBox ID="txtAffectedPortCentral" runat="server" TextMode="Number" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtMaliciousIPCentral">Malicious IP:</label>
+                <asp:TextBox ID="txtMaliciousIPCentral" runat="server" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtAlertDetailsCentral">Alert Details:</label>
+                <asp:TextBox ID="txtAlertDetailsCentral" runat="server" TextMode="MultiLine" Rows="4" CssClass="form-control" MaxLength="250"></asp:TextBox>
+            </div>
+
             <asp:Button ID="btnSubmitAlert" runat="server" Text="Submit Alert" CssClass="btn btn-primary" OnClick="btnSubmitAlert_Click" />
             <asp:Label ID="lblSubmissionMessage" runat="server" CssClass="text-success mt-2"></asp:Label>
         </form>
