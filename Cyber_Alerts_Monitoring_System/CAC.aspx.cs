@@ -7,40 +7,66 @@ namespace CyberAlertsWebApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Check if the user is logged in and has EmpCode in the session
             if (Session["EmpCode"] != null)
             {
-                // Pre-fill the Reporter field with the logged-in user's EmpCode
                 txtReporter.Text = Session["EmpCode"].ToString();
+
+                // Check the user's center
+                string center = Session["Center"] as string;
+                if (center == "Plant")
+                {
+                    // If the user is from a Plant/Unit, disable the central entry fields
+                    txtReceivedDateCentral.Enabled = false;
+                    txtSenderDetailsCentral.Enabled = false;
+                    txtIncidentDateCentral.Enabled = false;
+                    txtEntryDateCentral.Enabled = false;
+                    txtEmailDateCentral.Enabled = false;
+                    txtPertainingToUnitCentral.Enabled = false;
+                    txtAffectedSailIPCentral.Enabled = false;
+                    txtAffectedPortCentral.Enabled = false;
+                    txtMaliciousIPCentral.Enabled = false;
+                    txtAlertDetailsCentral.Enabled = false;
+
+                    // Optionally, you could provide a message or hide these fields entirely
+                    // lblMessage.Text = "This form is for Corporate Office users only.";
+                }
+                // If the center is "CO" (or null, implying CO in our placeholder logic), the fields will be enabled by default.
             }
             else
             {
-                // If EmpCode is not in session, redirect to login (optional, depending on your flow)
                 Response.Redirect("Login.aspx");
             }
         }
 
         protected void btnSubmitAlert_Click(object sender, EventArgs e)
         {
-            // Here you would typically retrieve the values from the form controls
+            // Retrieve values from the existing fields
             string alertTitle = txtAlertTitle.Text;
             string description = txtDescription.Text;
             string severity = ddlSeverity.SelectedValue;
             string affectedSystems = txtAffectedSystems.Text;
             string reporter = txtReporter.Text;
-            DateTime alertDateTime = DateTime.Parse(txtAlertDateTime.Text); // You might want to add error handling here
+            DateTime alertDateTime = DateTime.Parse(txtAlertDateTime.Text);
 
-            // For now, let's just display a success message
-            lblSubmissionMessage.Text = "Cyber alert submitted successfully!";
+            // Retrieve values from the new central entry fields
+            DateTime receivedDate = DateTime.Parse(txtReceivedDateCentral.Text);
+            string senderDetails = txtSenderDetailsCentral.Text;
+            DateTime incidentDate = DateTime.Parse(txtIncidentDateCentral.Text);
+            DateTime entryDate = DateTime.Parse(txtEntryDateCentral.Text);
+            DateTime emailDate = DateTime.Parse(txtEmailDateCentral.Text);
+            string pertainingToUnit = txtPertainingToUnitCentral.Text;
+            int affectedSailIP = int.Parse(txtAffectedSailIPCentral.Text); // Consider TryParse and validation
+            int affectedPort = int.Parse(txtAffectedPortCentral.Text);     // Consider TryParse and validation
+            string maliciousIP = txtMaliciousIPCentral.Text;
+            string alertDetails = txtAlertDetailsCentral.Text;
 
-            // In a real application, you would likely save this data to a database or perform other actions.
+            // For now, display a success message with some of the data
+            lblSubmissionMessage.Text = $"Cyber alert submitted successfully by {reporter} from {Session["Center"]}! Title: {alertTitle}, Received Date: {receivedDate}";
 
-            // Optionally, you can clear the form after submission
-            txtAlertTitle.Text = "";
-            txtDescription.Text = "";
-            ddlSeverity.SelectedIndex = 0; // Reset to the first item
-            txtAffectedSystems.Text = "";
-            txtAlertDateTime.Text = "";
+            // In a real application, you would save all this data.
+
+            // Optionally, clear the form
+            // ... (Clear all the text boxes and reset dropdowns as needed)
         }
     }
 }
