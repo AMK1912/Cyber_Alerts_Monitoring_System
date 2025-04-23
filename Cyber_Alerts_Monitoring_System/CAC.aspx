@@ -2,6 +2,46 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
         <h2 class="mt-5">Cyber Alerts - Corporate Office</h2>
-        <p>This page will display the cyber alerts for the Corporate Office.</p>
-        </div>
+        <p>Please fill out the form below to report a new cyber alert.</p>
+
+        <form id="cyberAlertForm" runat="server" class="mt-4">
+            <div class="form-group">
+                <label for="txtAlertTitle">Alert Title:</label>
+                <asp:TextBox ID="txtAlertTitle" runat="server" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtDescription">Description:</label>
+                <asp:TextBox ID="txtDescription" runat="server" TextMode="MultiLine" Rows="4" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="ddlSeverity">Severity Level:</label>
+                <asp:DropDownList ID="ddlSeverity" runat="server" CssClass="form-control">
+                    <asp:ListItem Value="High">High</asp:ListItem>
+                    <asp:ListItem Value="Medium">Medium</asp:ListItem>
+                    <asp:ListItem Value="Low">Low</asp:ListItem>
+                </asp:DropDownList>
+            </div>
+
+            <div class="form-group">
+                <label for="txtAffectedSystems">Affected System(s):</label>
+                <asp:TextBox ID="txtAffectedSystems" runat="server" CssClass="form-control"></asp:TextBox>
+                <small class="form-text text-muted">Separate multiple systems with commas if needed.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="txtReporter">Reporter:</label>
+                <asp:TextBox ID="txtReporter" runat="server" CssClass="form-control" ReadOnly="true"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label for="txtAlertDateTime">Date/Time of Alert:</label>
+                <asp:TextBox ID="txtAlertDateTime" runat="server" TextMode="DateTimeLocal" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <asp:Button ID="btnSubmitAlert" runat="server" Text="Submit Alert" CssClass="btn btn-primary" OnClick="btnSubmitAlert_Click" />
+            <asp:Label ID="lblSubmissionMessage" runat="server" CssClass="text-success mt-2"></asp:Label>
+        </form>
+    </div>
 </asp:Content>
