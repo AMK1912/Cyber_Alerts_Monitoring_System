@@ -50,22 +50,18 @@ public partial class login : System.Web.UI.Page
 
         try
         {
-
-
-
             string sql = "select emp_code from emp_cyber_alerts where emp_code=" + Convert.ToString(txtusername.Text);
             OleDbCommand cmd = new OleDbCommand(sql, conn);
             OleDbDataReader dr;
             if (conn.State == ConnectionState.Closed)
             {
-                con.Open();
+                conn.Open();
             }
             dr = cmd.ExecuteReader();
             dr.Read();
             if (dr.HasRows == true)
             {
-                chklogin = Convert.ToString(dr.GetValue(0));
-
+                chklogin = Convert.ToString(dr.GetValue(0)); // Assign value to the class-level variable
             }
             dr.Close();
             dr.Dispose();
@@ -76,7 +72,6 @@ public partial class login : System.Web.UI.Page
             Session.Clear();
             Session.Abandon();
             Session.RemoveAll();
-
             Response.Redirect("login.aspx");
         }
 
