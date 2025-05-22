@@ -36,27 +36,25 @@ public partial class Login : Page
 
             OleDbDataReader dr = cmd.ExecuteReader();
             if (dr.Read())
-{
-    string retrievedUsername = dr["empcode"].ToString();
-    string retrievedPassword = dr["password"].ToString();
-    try
-    {
-       string retrievedCenter = dr["center"].ToString();
-       System.Diagnostics.Debug.WriteLine("Center from DB: " + retrievedCenter);
-       Session["Center"] = retrievedCenter;
-    }
-    catch(Exception ex)
-    {
-       System.Diagnostics.Debug.WriteLine("Exception reading Center: " + ex.Message);
-       string retrievedCenter = "";
-       Session["Center"] = retrievedCenter;
-    }
-    System.Diagnostics.Debug.WriteLine("Login Successful - EmpCode: " + retrievedUsername + ", Center: " + retrievedCenter);
-    FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false);
-    return;
-}
-
-
+                {
+                    string retrievedUsername = dr["empcode"].ToString();
+                    string retrievedPassword = dr["password"].ToString();
+                    try
+                    {
+                       string retrievedCenter = dr["center"].ToString();
+                       System.Diagnostics.Debug.WriteLine("Center from DB: " + retrievedCenter);
+                       Session["Center"] = retrievedCenter;
+                    }
+                    catch(Exception ex)
+                    {
+                       System.Diagnostics.Debug.WriteLine("Exception reading Center: " + ex.Message);
+                       string retrievedCenter = "";
+                       Session["Center"] = retrievedCenter;
+                    }
+                    System.Diagnostics.Debug.WriteLine("Login Successful - EmpCode: " + retrievedUsername + ", Center: " + retrievedCenter);
+                    FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false);
+                    return;
+                }
                 else
                 {
                     message.Text = "Invalid username or password.";
