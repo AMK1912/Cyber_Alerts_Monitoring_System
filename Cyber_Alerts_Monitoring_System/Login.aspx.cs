@@ -1,7 +1,7 @@
 using System;
 using System.Configuration;
 using System.Data.OleDb;
-using System.Web.Security; //  For FormsAuthentication
+using System.Web.Security;
 using System.Web.UI;
 
 public partial class Login : Page
@@ -30,8 +30,7 @@ public partial class Login : Page
         try
         {
             conn.Open();
-            //  Query the temporary table.  Adjust the table name if needed.
-            string sql = "SELECT empcode, password, center FROM emp_cyber_alert WHERE empcode = ?";
+            string sql = "SELECT empcode, password, center FROM temp_emp_cyber_alert WHERE empcode = ?"; // Added center to the query
             OleDbCommand cmd = new OleDbCommand(sql, conn);
             cmd.Parameters.AddWithValue("?", txtusername.Text);
 
@@ -39,20 +38,20 @@ public partial class Login : Page
             if (dr.Read())
             {
                 string retrievedUsername = dr["empcode"].ToString();
-                string retrievedPassword = dr["password"].ToString(); // Get the plain-text password
-                string retrievedCenter = dr["center"].ToString();
+                string retrievedPassword = dr["password"].ToString();
+                string retrievedCenter = dr["center"].ToString(); // Get the user's center
 
                 //  INSECURE: Directly compare plain-text passwords.  DO NOT DO THIS IN PRODUCTION.
+                //  We are skipping hashing as per the user's request.
                 if (txtpassword.Text == retrievedPassword)
                 {
                     // Authentication successful
                     //  1.  Set Session variables.  This is CRUCIAL.
                     Session["EmpCode"] = retrievedUsername;
                     Session["Center"] = retrievedCenter;
-
-                    //  2.  Use FormsAuthentication.RedirectFromLoginPage().  This is the correct way to redirect.
-                    FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false); //  Use false for non-persistent cookie
-                    return; //  Important:  Exit the method after successful login
+                    System.Diagnostics.Debug.WriteLine("Login Successful - EmpCode: " + retrievedUsername + ", Center: " + retrievedCenter); // Debugging
+                    FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false);
+                    return;
                 }
                 else
                 {
@@ -79,4 +78,3 @@ public partial class Login : Page
         }
     }
 }
-
