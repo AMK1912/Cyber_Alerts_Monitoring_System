@@ -1,20 +1,10 @@
 using System;
 using System.Configuration;
-using System.Collections.Specialized;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using System.Data;
 using System.Data.OleDb;
+using System.Web.Security; //  For FormsAuthentication
+using System.Web.UI;
 
-using System.Text;
-using System.Web.SessionState;
-using System.Web.Services.Description;
-
-public partial class Login : System.Web.UI.Page
+public partial class Login : Page
 {
     private OleDbConnection conn;
 
@@ -33,14 +23,15 @@ public partial class Login : System.Web.UI.Page
 
         if (string.IsNullOrEmpty(txtusername.Text) || string.IsNullOrEmpty(txtpassword.Text))
         {
-            message.Text = "Please enter both employyee code and password.";
+            message.Text = "Please enter both employee code and password.";
             return;
         }
 
         try
         {
             conn.Open();
-            string sql = "SELECT empcode, password FROM emp_cyber_alert WHERE empcode = ?";
+            //  Query the temporary table.  Adjust the table name if needed.
+            string sql = "SELECT empcode, password, center FROM emp_cyber_alert WHERE empcode = ?";
             OleDbCommand cmd = new OleDbCommand(sql, conn);
             cmd.Parameters.AddWithValue("?", txtusername.Text);
 
@@ -48,18 +39,20 @@ public partial class Login : System.Web.UI.Page
             if (dr.Read())
             {
                 string retrievedUsername = dr["empcode"].ToString();
-                string retrievedPassword = dr["password"].ToString(); // This is the *plain-text* password
+                string retrievedPassword = dr["password"].ToString(); // Get the plain-text password
+                string retrievedCenter = dr["center"].ToString();
 
-                // INSECURE: Directly compare plain-text passwords (DO NOT DO THIS IN PRODUCTION)
+                //  INSECURE: Directly compare plain-text passwords.  DO NOT DO THIS IN PRODUCTION.
                 if (txtpassword.Text == retrievedPassword)
                 {
                     // Authentication successful
-                    //FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false);
-                    // Or, if not using Forms Authentication:
-                    System.Diagnostics.Debug.WriteLine("Authentication Successful. About to redirect to:" + Request.Url.GetLeftPart(UriPartial.Authority) + "/Default.aspx");
-                    Response.Redirect(Request.Url.GetLeftPart(UriPartial.Authority) + "/Default.aspx");
-                    System.Diagnostics.Debug.WriteLine("Response.Redirect() call executed.");
-                    return;
+                    //  1.  Set Session variables.  This is CRUCIAL.
+                    Session["EmpCode"] = retrievedUsername;
+                    Session["Center"] = retrievedCenter;
+
+                    //  2.  Use FormsAuthentication.RedirectFromLoginPage().  This is the correct way to redirect.
+                    FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false); //  Use false for non-persistent cookie
+                    return; //  Important:  Exit the method after successful login
                 }
                 else
                 {
@@ -86,3 +79,4 @@ public partial class Login : System.Web.UI.Page
         }
     }
 }
+
