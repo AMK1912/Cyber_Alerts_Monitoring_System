@@ -30,28 +30,26 @@ public partial class Login : Page
         try
         {
             conn.Open();
-            string sql = "SELECT empcode, password, center FROM temp_emp_cyber_alert WHERE empcode = ?"; // Added center to the query
+            string sql = "SELECT empcode, password, CENTER FROM emp_cyber_alert WHERE empcode = ?"; // Added center to the query
             OleDbCommand cmd = new OleDbCommand(sql, conn);
             cmd.Parameters.AddWithValue("?", txtusername.Text);
 
             OleDbDataReader dr = cmd.ExecuteReader();
             if (dr.Read())
+            {
+                string retrievedUsername = dr["empcode"].ToString();
+                string retrievedPassword = dr["password"].ToString();
+                string retrievedCenter = dr["CENTER"].ToString(); // Get the user's center
+
+                //  INSECURE: Directly compare plain-text passwords.  DO NOT DO THIS IN PRODUCTION.
+                //  We are skipping hashing as per the user's request.
+                if (txtpassword.Text == retrievedPassword)
                 {
-                    string retrievedUsername = dr["empcode"].ToString();
-                    string retrievedPassword = dr["password"].ToString();
-                    try
-                    {
-                       string retrievedCenter = dr["center"].ToString();
-                       System.Diagnostics.Debug.WriteLine("Center from DB: " + retrievedCenter);
-                       Session["Center"] = retrievedCenter;
-                    }
-                    catch(Exception ex)
-                    {
-                       System.Diagnostics.Debug.WriteLine("Exception reading Center: " + ex.Message);
-                       string retrievedCenter = "";
-                       Session["Center"] = retrievedCenter;
-                    }
-                    System.Diagnostics.Debug.WriteLine("Login Successful - EmpCode: " + retrievedUsername + ", Center: " + retrievedCenter);
+                    // Authentication successful
+                    //  1.  Set Session variables.  This is CRUCIAL.
+                    Session["EmpCode"] = retrievedUsername;
+                    Session["Center"] = retrievedCenter;
+                    System.Diagnostics.Debug.WriteLine("Login Successful - EmpCode: " + retrievedUsername + ", Center: " + retrievedCenter); // Debugging
                     FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false);
                     return;
                 }
