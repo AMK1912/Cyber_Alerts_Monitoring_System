@@ -1,73 +1,120 @@
 using System;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Data.OleDb;
 using System.Configuration;
+using System.Data.OleDb;
+using System.Web.Security;
+using System.Web.UI;
 
-namespace CyberAlert
+public partial class Login : Page
 {
-    public partial class CyberAlertsCentral : Page
+    private OleDbConnection conn;
+
+    protected void Page_Load(object sender, EventArgs e)
     {
-        private OleDbConnection conn;
-
-        protected void Page_Load(object sender, EventArgs e)
+        conn = new OleDbConnection(ConfigurationManager.ConnectionStrings["constring"].ToString());
+        if (!IsPostBack)
         {
-            conn = new OleDbConnection(ConfigurationManager.ConnectionStrings["constring"].ToString());
-            if (!IsPostBack)
+            txtusername.Focus();
+        }
+    }
+
+    protected void btnlogin_Click(object sender, EventArgs e)
+    {
+        message.Text = ""; // Clear any previous error message
+
+        if (string.IsNullOrEmpty(txtusername.Text) || string.IsNullOrEmpty(txtpassword.Text))
+        {
+            message.Text = "Please enter both employee code and password.";
+            return;
+        }
+
+        try
+        {
+            conn.Open();
+            string sql = "SELECT empcode, password, CENTER FROM emp_cyber_alert WHERE empcode = ?";
+            OleDbCommand cmd = new OleDbCommand(sql, conn);
+            cmd.Parameters.AddWithValue("?", txtusername.Text);
+
+            OleDbDataReader dr = cmd.ExecuteReader();
+            if (dr.Read())
             {
-                // Check for authentication and get user data from Session
-                if (Session["EmpCode"] != null && Session["Center"] != null)
+                string retrievedUsername = dr["empcode"].ToString();
+                string retrievedPassword = dr["password"].ToString();
+
+                string retrievedCenter = string.Empty; // Initialize to empty string
+
+                // --- DEEP DEBUGGING: List all columns in the DataReader ---
+                System.Diagnostics.Debug.WriteLine("--- DataReader Columns ---");
+                for (int i = 0; i < dr.FieldCount; i++)
                 {
-                    string center = Session["Center"].ToString();
+                    string columnName = dr.GetName(i);
+                    object columnValue = dr.GetValue(i);
+                    System.Diagnostics.Debug.WriteLine($"Column Index: {i}, Name: [{columnName}], Value: [{columnValue ?? "NULL"}]");
+                }
+                System.Diagnostics.Debug.WriteLine("--------------------------");
 
-                    // Debugging line for Page_Load
-                    System.Diagnostics.Debug.WriteLine("CAC.aspx.cs Page_Load - Session[Center]: [" + center + "]");
 
-                    if (center == "Plant")
+                try
+                {
+                    // Attempt to get the 'CENTER' value safely and robustly.
+                    // Check for DBNull.Value.
+                    // Use as string to avoid issues if ToString() is problematic for certain data types.
+                    // Then Trim and ToUpper.
+                    if (dr["CENTER"] != DBNull.Value)
                     {
-                        // Disable Central entry fields for Plant users
-                        txtReceivedDateCentral.Enabled = false;
-                        txtCentreUnit.Enabled = false;
-                        txtSenderDetailsCentral.Enabled = false;
-                        txtIncidentDateCentral.Enabled = false;
-                        txtEntryDateCentral.Enabled = false;
-                        txtEmailDateCentral.Enabled = false;
-                        txtPertainingToUnitCentral.Enabled = false;
-                        txtAffectedSailIPCentral.Enabled = false;
-                        txtAffectedPortCentral.Enabled = false;
-                        txtMaliciousIPCentral.Enabled = false;
-                        txtAlertDetailsCentral.Enabled = false;
-                        txtActionDateCentral.Enabled = false;
-                        txtActionDetails.Enabled = false;
-                        txtRemarksCentral.Enabled = false;
-                        txtRepliedSenderCentral.Enabled = false;
-                        txtClosingDateCentral.Enabled = false;
+                        retrievedCenter = dr["CENTER"] as string; // Try direct cast to string
+                        if (retrievedCenter == null) // If not a string, try ToString()
+                        {
+                            retrievedCenter = dr["CENTER"].ToString();
+                        }
+                        retrievedCenter = retrievedCenter.Trim(); // Trim any leading/trailing whitespace
+                        retrievedCenter = retrievedCenter.ToUpper(); // Convert to uppercase for consistent comparison
                     }
-                    //  CO users will have all fields enabled by default.
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("ERROR: Exception when trying to retrieve 'CENTER' by name (robust method): " + ex.Message);
+                    retrievedCenter = string.Empty; // Ensure it's empty if an error occurs
+                }
+
+                // --- CRITICAL DEBUGGING POINT 1 ---
+                System.Diagnostics.Debug.WriteLine("Login.aspx.cs - Value retrieved for 'CENTER' from DB (processed): [" + retrievedCenter + "]");
+
+
+                // INSECURE: Directly compare plain-text passwords. DO NOT DO THIS IN PRODUCTION.
+                if (txtpassword.Text == retrievedPassword)
+                {
+                    // Authentication successful
+                    Session["EmpCode"] = retrievedUsername;
+                    Session["Center"] = retrievedCenter; // Set the session variable
+
+                    // --- CRITICAL DEBUGGING POINT 2 ---
+                    System.Diagnostics.Debug.WriteLine("Login.aspx.cs - Session['Center'] SET TO: [" + Session["Center"] + "]");
+
+
+                    FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false);
+                    return;
                 }
                 else
                 {
-                    // Redirect to login if not authenticated or session data is missing
-                    Response.Redirect("Login.aspx");
+                    message.Text = "Invalid username or password.";
                 }
-            }
-        }
-
-        protected void btnSubmitAlert_Click(object sender, EventArgs e)
-        {
-            // Debugging line for btnSubmitAlert_Click
-            string sessionCenterOnSubmit = (Session["Center"] != null ? Session["Center"].ToString() : "NULL");
-            System.Diagnostics.Debug.WriteLine("CAC.aspx.cs btnSubmitAlert_Click - Session[Center]: [" + sessionCenterOnSubmit + "]");
-
-            // First, check the session
-            if (Session["Center"] != null && Session["Center"].ToString() == "CO") // This comparison is the key
-            {
-                // ... (your existing submission logic) ...
             }
             else
             {
-                lblSubmissionMessage.Text = "You do not have permission to submit Central alerts.";
-                lblSubmissionMessage.CssClass = "text-danger mt-2";
+                message.Text = "Invalid username or password."; // No user found
+            }
+            dr.Close();
+        }
+        catch (OleDbException ex)
+        {
+            message.Text = "Database error: " + ex.Message;
+            System.Diagnostics.Trace.WriteLine("DB Error: " + ex.ToString());
+        }
+        finally
+        {
+            if (conn.State == System.Data.ConnectionState.Open)
+            {
+                conn.Close();
             }
         }
     }
