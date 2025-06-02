@@ -105,14 +105,14 @@ namespace CyberAlert
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                         cmd.Parameters.Add("vRECEIVE_DATE", OleDbType.Date).Value = receivedDt;
-                        cmd.Parameters.Add("vCENTER_UNIT", OleDbType.VarChar).Value = centreUnit;
+                        cmd.Parameters.Add("vCENTER_UNIT", OleDbType.Integer).Value = centreUnit;
                         cmd.Parameters.Add("vRECEIVED_FROM_SENDER", OleDbType.VarChar).Value = senderDetails;
                         cmd.Parameters.Add("vINCIDENT_DATE", OleDbType.Date).Value = incidentDt;
                         cmd.Parameters.Add("vENTRY_DATE", OleDbType.Date).Value = entryDt;
                         cmd.Parameters.Add("vEMAIL_TO_PLANT_DATE", OleDbType.Date).Value = emailDt;
-                        cmd.Parameters.Add("vPERTAINING_TO_UNIT", OleDbType.VarChar).Value = pertainingToUnit;
+                        cmd.Parameters.Add("vPERTAINING_TO_UNIT", OleDbType.Integer).Value = pertainingToUnit;
                         cmd.Parameters.Add("vAFFECTED_SAILIP", OleDbType.VarChar).Value = affectedSailIP;
-                        cmd.Parameters.Add("vAFFECTED_PORT", OleDbType.VarChar).Value = affectedPort;
+                        cmd.Parameters.Add("vAFFECTED_PORT", OleDbType.Integer).Value = affectedPort;
                         cmd.Parameters.Add("vMALICIOUS_IP", OleDbType.VarChar).Value = maliciousIP;
                         cmd.Parameters.Add("vALERT_DETAILS", OleDbType.VarChar).Value = alertDetails;
                         cmd.Parameters.Add("vFIRST_ACTION_DATE", OleDbType.Date).Value = actionDt;
