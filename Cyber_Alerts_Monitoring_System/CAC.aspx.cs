@@ -3,7 +3,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.OleDb;
 using System.Configuration;
-// using Oracle.ManagedDataAccess.Client; // This using statement is not needed if you are strictly using OleDbConnection
 
 namespace CyberAlert
 {
@@ -20,8 +19,6 @@ namespace CyberAlert
                 if (Session["EmpCode"] != null && Session["Center"] != null)
                 {
                     string center = Session["Center"].ToString();
-
-                    // Debugging line for Page_Load
                     System.Diagnostics.Debug.WriteLine("CAC.aspx.cs Page_Load - Session[Center]: [" + center + "]");
 
                     if (center == "Plant")
@@ -44,7 +41,6 @@ namespace CyberAlert
                         txtRepliedSenderCentral.Enabled = false;
                         txtClosingDateCentral.Enabled = false;
                     }
-                    //  CO users will have all fields enabled by default.
                 }
                 else
                 {
@@ -56,11 +52,17 @@ namespace CyberAlert
 
         protected void btnSubmitAlert_Click(object sender, EventArgs e)
         {
-            // Debugging line for btnSubmitAlert_Click
             string sessionCenterOnSubmit = (Session["Center"] != null ? Session["Center"].ToString() : "NULL");
             System.Diagnostics.Debug.WriteLine("CAC.aspx.cs btnSubmitAlert_Click - Session[Center]: [" + sessionCenterOnSubmit + "]");
 
-            // First, check the session
+            // Ensure the page is valid based on all validators before proceeding
+            if (!Page.IsValid)
+            {
+                lblSubmissionMessage.Text = "Please correct the highlighted errors.";
+                lblSubmissionMessage.CssClass = "text-danger mt-2";
+                return;
+            }
+
             if (Session["Center"] != null && Session["Center"].ToString() == "CO")
             {
                 // Retrieve values from the fields (all as strings initially)
@@ -76,61 +78,22 @@ namespace CyberAlert
                 string affectedPort = txtAffectedPortCentral.Text;
                 string maliciousIP = txtMaliciousIPCentral.Text;
                 string alertDetails = txtAlertDetailsCentral.Text;
-                string actionDateStr = txtActionDateCentral.Text; // String from textbox
+                string actionDateStr = txtActionDateCentral.Text;
                 string actionDetails = txtActionDetails.Text;
                 string remarks = txtRemarksCentral.Text;
-                string repliedSenderStr = txtRepliedSenderCentral.Text; // String from textbox
-                string closingDateStr = txtClosingDateCentral.Text; // String from textbox
+                string repliedSenderStr = txtRepliedSenderCentral.Text;
+                string closingDateStr = txtClosingDateCentral.Text;
 
-
-                // Validation for empty fields
-                if (string.IsNullOrEmpty(alertDateTimeStr) || string.IsNullOrEmpty(receivedDateStr)||
-                    string.IsNullOrEmpty(senderDetails) || string.IsNullOrEmpty(incidentDateStr) ||
-                    string.IsNullOrEmpty(entryDateStr) ||string.IsNullOrEmpty(emailDateStr) ||
-                    string.IsNullOrEmpty(pertainingToUnit) || string.IsNullOrEmpty(affectedSailIP) ||
-                    string.IsNullOrEmpty(affectedPort) || string.IsNullOrEmpty(maliciousIP) ||
-                    string.IsNullOrEmpty(alertDetails) || string.IsNullOrEmpty(actionDateStr) ||
-                    string.IsNullOrEmpty(actionDetails)|| string.IsNullOrEmpty(remarks) ||
-                    string.IsNullOrEmpty(repliedSenderStr)|| string.IsNullOrEmpty(closingDateStr))
-                {
-                    lblSubmissionMessage.Text = "Please fill in all required fields.";
-                    lblSubmissionMessage.CssClass = "text-danger mt-2";
-                    return;
-                }
-
-                // No longer parsing IP/Port as int, as per your request.
-                // int sailIP, port;
-                // if (!int.TryParse(affectedSailIP, out sailIP) || !int.TryParse(affectedPort, out port))
-                // {
-                //     lblSubmissionMessage.Text = "Affected SAIL IP and Affected Port must be numeric values.";
-                //     lblSubmissionMessage.CssClass = "text-danger mt-2";
-                //     return;
-                // }
-
-                // Declare DateTime variables and initialize them to avoid CS0165 if parsing fails
-                DateTime alertDt = DateTime.MinValue;
-                DateTime receivedDt = DateTime.MinValue;
-                DateTime incidentDt = DateTime.MinValue;
-                DateTime entryDt = DateTime.MinValue;
-                DateTime emailDt = DateTime.MinValue;
-                DateTime actionDt = DateTime.MinValue;
-                DateTime repliedSenderDt = DateTime.MinValue;
-                DateTime closingDt = DateTime.MinValue;
-
-                // Parse all date/time strings to DateTime objects
-                if (!DateTime.TryParse(alertDateTimeStr, out alertDt) ||
-                    !DateTime.TryParse(receivedDateStr, out receivedDt) ||
-                    !DateTime.TryParse(incidentDateStr, out incidentDt) ||
-                    !DateTime.TryParse(entryDateStr, out entryDt) ||
-                    !DateTime.TryParse(emailDateStr, out emailDt) ||
-                    !DateTime.TryParse(actionDateStr, out actionDt) ||
-                    !DateTime.TryParse(repliedSenderStr, out repliedSenderDt) ||
-                    !DateTime.TryParse(closingDateStr, out closingDt))
-                {
-                    lblSubmissionMessage.Text = "Please enter valid date and time values for all date fields.";
-                    lblSubmissionMessage.CssClass = "text-danger mt-2";
-                    return;
-                }
+                // All date/time strings are now assumed valid due to client-side validators.
+                // We can directly parse them without the TryParse check in the if condition.
+                DateTime alertDt = DateTime.Parse(alertDateTimeStr);
+                DateTime receivedDt = DateTime.Parse(receivedDateStr);
+                DateTime incidentDt = DateTime.Parse(incidentDateStr);
+                DateTime entryDt = DateTime.Parse(entryDateStr);
+                DateTime emailDt = DateTime.Parse(emailDateStr);
+                DateTime actionDt = DateTime.Parse(actionDateStr);
+                DateTime repliedSenderDt = DateTime.Parse(repliedSenderStr);
+                DateTime closingDt = DateTime.Parse(closingDateStr);
 
                 try
                 {
@@ -141,7 +104,6 @@ namespace CyberAlert
                         OleDbCommand cmd = new OleDbCommand(procedureName, currentConn);
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                        // Parameters are now passed as their parsed DateTime objects or original strings
                         cmd.Parameters.Add("vRECEIVE_DATE", OleDbType.Date).Value = receivedDt;
                         cmd.Parameters.Add("vCENTER_UNIT", OleDbType.VarChar).Value = centreUnit;
                         cmd.Parameters.Add("vRECEIVED_FROM_SENDER", OleDbType.VarChar).Value = senderDetails;
@@ -149,15 +111,15 @@ namespace CyberAlert
                         cmd.Parameters.Add("vENTRY_DATE", OleDbType.Date).Value = entryDt;
                         cmd.Parameters.Add("vEMAIL_TO_PLANT_DATE", OleDbType.Date).Value = emailDt;
                         cmd.Parameters.Add("vPERTAINING_TO_UNIT", OleDbType.VarChar).Value = pertainingToUnit;
-                        cmd.Parameters.Add("vAFFECTED_SAILIP", OleDbType.VarChar).Value = affectedSailIP; // Already changed to VarChar
-                        cmd.Parameters.Add("vAFFECTED_PORT", OleDbType.VarChar).Value = affectedPort;     // Already changed to VarChar
+                        cmd.Parameters.Add("vAFFECTED_SAILIP", OleDbType.VarChar).Value = affectedSailIP;
+                        cmd.Parameters.Add("vAFFECTED_PORT", OleDbType.VarChar).Value = affectedPort;
                         cmd.Parameters.Add("vMALICIOUS_IP", OleDbType.VarChar).Value = maliciousIP;
                         cmd.Parameters.Add("vALERT_DETAILS", OleDbType.VarChar).Value = alertDetails;
-                        cmd.Parameters.Add("vFIRST_ACTION_DATE", OleDbType.Date).Value = actionDt; // Use parsed DateTime
+                        cmd.Parameters.Add("vFIRST_ACTION_DATE", OleDbType.Date).Value = actionDt;
                         cmd.Parameters.Add("vDETAILS_OF_ACTION", OleDbType.VarChar).Value = actionDetails;
                         cmd.Parameters.Add("vREMARKS", OleDbType.VarChar).Value = remarks;
-                        cmd.Parameters.Add("vREPLIED_SENDER_DATE", OleDbType.Date).Value = repliedSenderDt; // Use parsed DateTime
-                        cmd.Parameters.Add("vCLOSING_DATE", OleDbType.Date).Value = closingDt; // Use parsed DateTime
+                        cmd.Parameters.Add("vREPLIED_SENDER_DATE", OleDbType.Date).Value = repliedSenderDt;
+                        cmd.Parameters.Add("vCLOSING_DATE", OleDbType.Date).Value = closingDt;
                         cmd.ExecuteNonQuery();
 
                         lblSubmissionMessage.Text = "Cyber alert submitted successfully!";
