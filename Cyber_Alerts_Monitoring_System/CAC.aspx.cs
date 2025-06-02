@@ -68,14 +68,14 @@ namespace CyberAlert
                 // Retrieve values from the fields (all as strings initially)
                 string alertDateTimeStr = txtAlertDateTime.Text;
                 string receivedDateStr = txtReceivedDateCentral.Text;
-                string centreUnit = txtCentreUnit.Text;
+                string centreUnitStr = txtCentreUnit.Text; // Keep as string initially
                 string senderDetails = txtSenderDetailsCentral.Text;
                 string incidentDateStr = txtIncidentDateCentral.Text;
                 string entryDateStr = txtEntryDateCentral.Text;
                 string emailDateStr = txtEmailDateCentral.Text;
-                string pertainingToUnit = txtPertainingToUnitCentral.Text;
-                string affectedSailIP = txtAffectedSailIPCentral.Text;
-                string affectedPort = txtAffectedPortCentral.Text;
+                string pertainingToUnitStr = txtPertainingToUnitCentral.Text; // Keep as string initially
+                string affectedSailIP = txtAffectedSailIPCentral.Text; // As string
+                string affectedPortStr = txtAffectedPortCentral.Text;     // As string
                 string maliciousIP = txtMaliciousIPCentral.Text;
                 string alertDetails = txtAlertDetailsCentral.Text;
                 string actionDateStr = txtActionDateCentral.Text;
@@ -85,7 +85,6 @@ namespace CyberAlert
                 string closingDateStr = txtClosingDateCentral.Text;
 
                 // All date/time strings are now assumed valid due to client-side validators.
-                // We can directly parse them without the TryParse check in the if condition.
                 DateTime alertDt = DateTime.Parse(alertDateTimeStr);
                 DateTime receivedDt = DateTime.Parse(receivedDateStr);
                 DateTime incidentDt = DateTime.Parse(incidentDateStr);
@@ -94,6 +93,34 @@ namespace CyberAlert
                 DateTime actionDt = DateTime.Parse(actionDateStr);
                 DateTime repliedSenderDt = DateTime.Parse(repliedSenderStr);
                 DateTime closingDt = DateTime.Parse(closingDateStr);
+
+                // --- NEW: Convert string values to int for Integer parameters ---
+                int centreUnitInt;
+                int pertainingToUnitInt;
+                int affectedPortInt; // Renamed to avoid conflict with string variable
+
+                // Use TryParse for robustness, even if client-side validation is present.
+                // This handles cases where client-side validation might be bypassed.
+                if (!int.TryParse(centreUnitStr, out centreUnitInt))
+                {
+                    lblSubmissionMessage.Text = "Centre Unit must be a valid number.";
+                    lblSubmissionMessage.CssClass = "text-danger mt-2";
+                    return;
+                }
+                if (!int.TryParse(pertainingToUnitStr, out pertainingToUnitInt))
+                {
+                    lblSubmissionMessage.Text = "Pertaining To Unit must be a valid number.";
+                    lblSubmissionMessage.CssClass = "text-danger mt-2";
+                    return;
+                }
+                if (!int.TryParse(affectedPortStr, out affectedPortInt))
+                {
+                    lblSubmissionMessage.Text = "Affected Port must be a valid number.";
+                    lblSubmissionMessage.CssClass = "text-danger mt-2";
+                    return;
+                }
+                // --- END NEW CONVERSIONS ---
+
 
                 try
                 {
@@ -105,14 +132,14 @@ namespace CyberAlert
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                         cmd.Parameters.Add("vRECEIVE_DATE", OleDbType.Date).Value = receivedDt;
-                        cmd.Parameters.Add("vCENTER_UNIT", OleDbType.Integer).Value = centreUnit;
+                        cmd.Parameters.Add("vCENTER_UNIT", OleDbType.Integer).Value = centreUnitInt; // Use the parsed int
                         cmd.Parameters.Add("vRECEIVED_FROM_SENDER", OleDbType.VarChar).Value = senderDetails;
                         cmd.Parameters.Add("vINCIDENT_DATE", OleDbType.Date).Value = incidentDt;
                         cmd.Parameters.Add("vENTRY_DATE", OleDbType.Date).Value = entryDt;
                         cmd.Parameters.Add("vEMAIL_TO_PLANT_DATE", OleDbType.Date).Value = emailDt;
-                        cmd.Parameters.Add("vPERTAINING_TO_UNIT", OleDbType.Integer).Value = pertainingToUnit;
+                        cmd.Parameters.Add("vPERTAINING_TO_UNIT", OleDbType.Integer).Value = pertainingToUnitInt; // Use the parsed int
                         cmd.Parameters.Add("vAFFECTED_SAILIP", OleDbType.VarChar).Value = affectedSailIP;
-                        cmd.Parameters.Add("vAFFECTED_PORT", OleDbType.Integer).Value = affectedPort;
+                        cmd.Parameters.Add("vAFFECTED_PORT", OleDbType.Integer).Value = affectedPortInt; // Use the parsed int
                         cmd.Parameters.Add("vMALICIOUS_IP", OleDbType.VarChar).Value = maliciousIP;
                         cmd.Parameters.Add("vALERT_DETAILS", OleDbType.VarChar).Value = alertDetails;
                         cmd.Parameters.Add("vFIRST_ACTION_DATE", OleDbType.Date).Value = actionDt;
