@@ -8,12 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%: Page.Title %> - Cyber Alerts Monitoring System</title>
 
-    <asp:PlaceHolder runat="server">
+<%--    <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/modernizr") %>
     </asp:PlaceHolder>
 
-    <webopt:bundlereference runat="server" path="~/Content/css" />
+    <webopt:bundlereference runat="server" path="~/Content/css" />--%>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="~/style.css" rel="stylesheet" />
 
 </head>
 <body>
@@ -42,7 +43,7 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" runat="server" href="~/">Cyber Alerts Monitor</a>
                     <ul class="nav navbar-nav">
-                        <li><p><a runat="server" href="~/">Home</a></p></li>
+                        <li><p><a runat="server" href="~/Default.aspx">Home</a></p></li>
                         <li><p><a runat="server" href="~/CyberAlertsCentral.aspx">Cyber Alerts (CO)</a></p></li>
                         <li><p><a runat="server" href="~/CyberAlertsLocal.aspx">Cyber Alerts (Plant)</a></p></li>
                         <li><p><a runat="server" href="~/Reports.aspx">Reports</a></p></li>
@@ -57,8 +58,8 @@
             <hr />
         </div>
     </form>
-    <asp:PlaceHolder runat="server">
+<%--    <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/Scripts/bootstrap.js") %>
-    </asp:PlaceHolder>
+    </asp:PlaceHolder>--%>
 </body>
 </html>
