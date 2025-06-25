@@ -1,72 +1,103 @@
 <%@ Page Title="Reports" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
     CodeBehind="Reports.aspx.cs" Inherits="CyberAlert.Reports" %>
 
-<%@ Register assembly="CrystalDecisions.Web, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" namespace="CrystalDecisions.Web" tagprefix="CR" %>
+<%-- IMPORTANT: Register the Crystal Reports tag prefix.
+     Verify the Version and PublicKeyToken from your CrystalDecisions.Web.dll reference properties.
+     (e.g., in VS Solution Explorer, click 'References', find CrystalDecisions.Web, view Properties) --%>
+<%@ Register Assembly="CrystalDecisions.Web, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304"
+    Namespace="CrystalDecisions.Web" TagPrefix="CR" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container mt-5">
-        <h2>Report Center</h2>
-        <p>Select a report type from the navbar to view data. Reports will be filtered by your plant location.</p>
+        <h2 class="mb-3">Report Center</h2>
+        <p class="mb-4">Select a report type from the list to view data. Reports will be filtered by your plant location.</p>
 
-
-
-            <strong>
-            <h3 class="auto-style3">1. Consolidate Reports<strong><asp:Button ID="Button1" runat="server" CssClass="auto-style1" OnClick="Button1_Click" Text="Load Report" Width="128px" Height="30px" />
-            </strong>
-
-        </h3>
-            <h3 class="auto-style4">1. SEBI Reports</h3>
-            <br />
-            <asp:Button ID="Button2" runat="server" CssClass="auto-style1" OnClick="Button1_Click" Text="Load Report" Width="128px" Height="30px" />
-            </strong>
-
-
-
-        <div class="auto-style2">
-            <br />
-
-        </div>
-
-        <div>
-
-            <CR:CrystalReportViewer ID="CrystalReportViewer1" runat="server" AutoDataBind="true" />
-
-        </div>
-        <%--<div class="row mb-4">
+        <div class="row">
+            <%-- Left column for report selection --%>
             <div class="col-md-3">
-                <div class="list-group">
-                    <asp:LinkButton ID="btnConsolidatedReport" runat="server" OnClick="btnReport_Click" CommandArgument="Consolidated"
-                        CssClass="list-group-item list-group-item-action">Consolidated Reports</asp:LinkButton>
-                    <asp:LinkButton ID="btnAffectedIPReport" runat="server" OnClick="btnReport_Click" CommandArgument="AffectedIP"
-                        CssClass="list-group-item list-group-item-action">Affected IP Reports</asp:LinkButton>
-                    <asp:LinkButton ID="btnMaliciousReport" runat="server" OnClick="btnReport_Click" CommandArgument="Malicious"
-                        CssClass="list-group-item list-group-item-action" style="left: 0px; top: 0px">Malicious Reports</asp:LinkButton>
-                    <%-- Add more report types here as needed --%>
-                    <%-- <asp:LinkButton ID="btnOtherReport" runat="server" OnClick="btnReport_Click" CommandArgument="Other"
-                        CssClass="list-group-item list-group-item-action">Other Reports</asp:LinkButton>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Report Types</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Consolidated Reports</h6>
+                                    <small class="text-muted">Summary of all alerts.</small>
+                                </div>
+                                <asp:Button ID="btnLoadConsolidatedReport" runat="server" Text="Load Report"
+                                    OnClick="btnLoadReport_Click" CommandArgument="Consolidated"
+                                    CssClass="btn btn-primary btn-sm" />
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-light text-muted">
+                                <div>
+                                    <h6 class="mb-1">SEBI Reports</h6>
+                                    <small>Not yet implemented.</small>
+                                </div>
+                                <asp:Button ID="btnLoadSEBIReport" runat="server" Text="Load Report"
+                                    Enabled="false"
+                                    CssClass="btn btn-secondary btn-sm disabled" />
+                            </li>
+                            <%-- Add more report types here --%>
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-light text-muted">
+                                <div>
+                                    <h6 class="mb-1">Affected IP Reports</h6>
+                                    <small>Not yet implemented.</small>
+                                </div>
+                                <asp:Button ID="btnLoadAffectedIPReport" runat="server" Text="Load Report"
+                                    Enabled="false"
+                                    CssClass="btn btn-secondary btn-sm disabled" />
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-light text-muted">
+                                <div>
+                                    <h6 class="mb-1">Malicious Reports</h6>
+                                    <small>Not yet implemented.</small>
+                                </div>
+                                <asp:Button ID="btnLoadMaliciousReport" runat="server" Text="Load Report"
+                                    Enabled="false"
+                                    CssClass="btn btn-secondary btn-sm disabled" />
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+
+            <%-- Right column for report viewer --%>
             <div class="col-md-9">
                 <div class="card">
                     <div class="card-header">
-                        <h4 id="reportTitle" runat="server" class="mb-0">Select a Report</h4>
+                        <h4 id="reportTitle" runat="server" class="mb-0">Please Select a Report</h4>
                     </div>
                     <div class="card-body">
+                        <%-- Displays the current plant location --%>
                         <asp:Label ID="lblPlantLocation" runat="server" CssClass="d-block mb-3 text-muted"></asp:Label>
+                        <%-- For displaying error or informational messages --%>
                         <asp:Label ID="lblMessage" runat="server" Text="" CssClass="text-danger d-block mb-3"></asp:Label>
 
-                        <asp:GridView ID="gvReports" runat="server" AutoGenerateColumns="true"
-                            CssClass="table table-striped table-bordered" EmptyDataText="No data available for this report type or plant location."
-                            AllowPaging="True" PageSize="10" OnPageIndexChanging="gvReports_PageIndexChanging">
-                            <%-- Columns will be auto-generated for simplicity. For custom columns, set AutoGenerateColumns="false" and define <asp:BoundField> or <asp:TemplateField>
-                        </asp:GridView>
+                        <%-- The Crystal Reports Viewer control --%>
+                        <CR:CrystalReportViewer ID="CrystalReportViewer1" runat="server"
+                            AutoDataBind="true"
+                            DisplayGroupTree="False"             <%-- Hides the group tree panel --%>
+                            EnableDatabaseLogonPrompt="False"    <%-- Prevents database login dialogs --%>
+                            HasCrystalLogo="False"               <%-- Removes the Crystal Reports logo --%>
+                            HasToggleGroupTreeButton="False"
+                            HasToggleParameterPanelButton="False"
+                            HasPageNavigationButtons="True"
+                            BestFitPage="True"
+                            ToolPanelView="None"                 <%-- Hides the side tool panel completely --%>
+                            Height="800px"                       <%-- Set a fixed height for the viewer --%>
+                            Width="100%" />                      <%-- Make the viewer take full width of its container --%>
                     </div>
                 </div>
             </div>
-        </div>--%>
+        </div>
     </div>
 </asp:Content>
-<asp:Content ID="Content2" runat="server" contentplaceholderid="HeadContent">
+
+<%-- Remove the Content2 block and its style definitions.
+     All styling should ideally be in Site.css or directly via Bootstrap classes. --%>
+<%-- <asp:Content ID="Content2" runat="server" contentplaceholderid="HeadContent">
     <style type="text/css">
         .auto-style1 {
             font-weight: bold;
@@ -84,4 +115,4 @@
             height: 23px;
         }
     </style>
-</asp:Content>
+</asp:Content> --%>
