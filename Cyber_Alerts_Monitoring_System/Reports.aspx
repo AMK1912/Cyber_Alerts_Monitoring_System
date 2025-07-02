@@ -6,21 +6,34 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container mt-5">
         <h2>Report Center</h2>
-        <p>Select a report type from the given below Report types to view data. Reports will be filtered by your plant location</p>
+        <p>Select a report type from the given below Report types to view data. Reports will be filtered by your plant location.</p>
 
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="ddlMonth">Select Month:</label>
+                <asp:DropDownList ID="ddlMonth" runat="server" CssClass="form-control"></asp:DropDownList>
+            </div>
+            <div class="col-md-3">
+                <label for="ddlYear">Select Year:</label>
+                <asp:DropDownList ID="ddlYear" runat="server" CssClass="form-control"></asp:DropDownList>
+            </div>
+            <%-- Optional: A button to explicitly apply filters if you don't want it tied to report buttons --%>
+            <%-- <div class="col-md-3 d-flex align-items-end">
+                <asp:Button ID="btnApplyFilter" runat="server" Text="Apply Filter" OnClick="btnApplyFilter_Click" CssClass="btn btn-primary" />
+            </div> --%>
+        </div>
 
-
-            <ol>
-                <li><asp:Button ID="Button1" runat="server" CssClass="auto-style1" OnClick="Button1_Click" Text="Affected IP Report" Width="175px" Height="26px" /></li>
-                <li><asp:Button ID="Button2" runat="server" CssClass="auto-style3" OnClick="Button2_Click" Text="SEBI Report" Width="175px" Height="26px" /></li>
-                <li><asp:Button ID="Button3" runat="server" CssClass="auto-style3" OnClick="Button3_Click" Text="Malicious IP Report" Width="175px" Height="26px" /></li>
-                <li><asp:Button ID="Button4" runat="server" CssClass="auto-style3" OnClick="Button4_Click" Text="Affected Ports Report" Width="175px" Height="26px" /></li>
-                <li><asp:Button ID="Button5" runat="server" CssClass="auto-style3" OnClick="Button5_Click" Text="Action Pending Report" Width="175px" Height="26px" /></li>
-                <li><asp:Button ID="Button6" runat="server" CssClass="auto-style3" OnClick="Button6_Click" Text="Closed Incidents Report" Width="175px" Height="26px" /></li>
-            </ol>
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <br />
+        <ol>
+            <li><asp:Button ID="Button1" runat="server" CssClass="auto-style1" OnClick="Button1_Click" Text="Affected IP Report" Width="175px" Height="26px" /></li>
+            <li><asp:Button ID="Button2" runat="server" CssClass="auto-style3" OnClick="Button2_Click" Text="SEBI Report" Width="175px" Height="26px" /></li>
+            <li><asp:Button ID="Button3" runat="server" CssClass="auto-style3" OnClick="Button3_Click" Text="Malicious IP Report" Width="175px" Height="26px" /></li>
+            <li><asp:Button ID="Button4" runat="server" CssClass="auto-style3" OnClick="Button4_Click" Text="Affected Ports Report" Width="175px" Height="26px" /></li>
+            <li><asp:Button ID="Button5" runat="server" CssClass="auto-style3" OnClick="Button5_Click" Text="Action Pending Report" Width="175px" Height="26px" /></li>
+            <li><asp:Button ID="Button6" runat="server" CssClass="auto-style3" OnClick="Button6_Click" Text="Closed Incidents Report" Width="175px" Height="26px" /></li>
+        </ol>
+        <br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <br />
 
         <div class="auto-style2">
             <br />
@@ -28,51 +41,18 @@
         </div>
 
         <div>
-
             <CR:CrystalReportViewer ID="CrystalReportViewer1" runat="server" AutoDataBind="true" />
-
         </div>
-        <%--<div class="row mb-4">
-            <div class="col-md-3">
-                <div class="list-group">
-                    <asp:LinkButton ID="btnConsolidatedReport" runat="server" OnClick="btnReport_Click" CommandArgument="Consolidated"
-                        CssClass="list-group-item list-group-item-action">Consolidated Reports</asp:LinkButton>
-                    <asp:LinkButton ID="btnAffectedIPReport" runat="server" OnClick="btnReport_Click" CommandArgument="AffectedIP"
-                        CssClass="list-group-item list-group-item-action">Affected IP Reports</asp:LinkButton>
-                    <asp:LinkButton ID="btnMaliciousReport" runat="server" OnClick="btnReport_Click" CommandArgument="Malicious"
-                        CssClass="list-group-item list-group-item-action" style="left: 0px; top: 0px">Malicious Reports</asp:LinkButton>
-                    <%-- Add more report types here as needed --%>
-                    <%-- <asp:LinkButton ID="btnOtherReport" runat="server" OnClick="btnReport_Click" CommandArgument="Other"
-                        CssClass="list-group-item list-group-item-action">Other Reports</asp:LinkButton>
-                </div>
-            </div>
-            <div class="col-md-9">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 id="reportTitle" runat="server" class="mb-0">Select a Report</h4>
-                    </div>
-                    <div class="card-body">
-                        <asp:Label ID="lblPlantLocation" runat="server" CssClass="d-block mb-3 text-muted"></asp:Label>
-                        <asp:Label ID="lblMessage" runat="server" Text="" CssClass="text-danger d-block mb-3"></asp:Label>
-
-                        <asp:GridView ID="gvReports" runat="server" AutoGenerateColumns="true"
-                            CssClass="table table-striped table-bordered" EmptyDataText="No data available for this report type or plant location."
-                            AllowPaging="True" PageSize="10" OnPageIndexChanging="gvReports_PageIndexChanging">
-                            <%-- Columns will be auto-generated for simplicity. For custom columns, set AutoGenerateColumns="false" and define <asp:BoundField> or <asp:TemplateField>
-                        </asp:GridView>
-                    </div>
-                </div>
-            </div>
-        </div>--%>
     </div>
-    </strong>
 </asp:Content>
+
 <asp:Content ID="Content2" runat="server" contentplaceholderid="HeadContent">
     <style type="text/css">
+        /* Styles for your existing buttons */
         .auto-style1 {
             font-weight: bold;
             background-color: #FFFFFF;
-            margin-left: 39;
+            margin-left: 39px; /* Corrected to include px */
         }
         .auto-style2 {
             margin-left: 160px;
@@ -81,7 +61,43 @@
         .auto-style3 {
             font-weight: bold;
             background-color: #FFFFFF;
-            margin-left: 0px;
+            margin-left: 0px; /* Explicitly set to 0px */
         }
-        </style>
+
+        /* Basic styling for dropdowns to mimic Bootstrap's look if not using full Bootstrap */
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px; /* Compensate for column padding */
+            margin-left: -15px;  /* Compensate for column padding */
+        }
+        .col-md-3 {
+            flex: 0 0 25%; /* 25% width */
+            max-width: 25%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+        .mb-3 {
+            margin-bottom: 1rem !important; /* Standard Bootstrap margin-bottom */
+        }
+        .mt-5 {
+            margin-top: 3rem !important; /* Standard Bootstrap margin-top */
+        }
+        /* Flexbox utilities */
+        .d-flex { display: flex !important; }
+        .align-items-end { align-items: flex-end !important; }
+    </style>
 </asp:Content>
