@@ -12,16 +12,20 @@
 
         <div class="row mb-4">
             <div class="col-md-6">
-                <h4>Start Date</h4>
+                <h4>Select Start Date:</h4>
                 <asp:Calendar ID="Calendar1" runat="server" Culture="en-US" UICulture="en-US" OnSelectionChanged="Calendar_SelectionChanged"></asp:Calendar>
             </div>
             <div class="col-md-6">
-                <h4>End Date</h4>
+                <h4>Select End Date:</h4>
                 <asp:Calendar ID="Calendar2" runat="server" Culture="en-US" UICulture="en-US" OnSelectionChanged="Calendar_SelectionChanged"></asp:Calendar>
             </div>
         </div>
 
         <hr />
+        <br />
+
+        <%-- Label for displaying messages (e.g., date validation errors) --%>
+        <asp:Label ID="lblMessage" runat="server" ForeColor="Red" EnableViewState="false"></asp:Label>
         <br />
 
         <ol class="list-unstyled report-buttons">
@@ -36,10 +40,6 @@
 
         <br />
         
-        <%-- Label for messages --%>
-        <asp:Label ID="lblMessage" runat="server" ForeColor="Red" EnableViewState="false"></asp:Label>
-
-
         <div class="mt-4"> <%-- Added margin top for spacing --%>
             <CR:CrystalReportViewer ID="CrystalReportViewer1" runat="server" AutoDataBind="true" />
         </div>
@@ -80,17 +80,14 @@
         .mb-4 { margin-bottom: 1.5rem !important; }
 
         /* Calendar specific alignment - centered within its column */
-        .col-md-6 .asp-calendar-wrapper { /* You might need to inspect the rendered HTML to target the exact calendar wrapper */
-             display: flex;
-             justify-content: center;
-             width: 100%; /* Ensure it takes full width of column */
-        }
-        /* Default ASP.NET Calendar styling can be tricky. You might need to inspect */
-        /* its output HTML to target specific elements like table, div etc. */
-        /* For basic centering of the calendar table itself if the wrapper doesn't work: */
+        /* ASP.NET Calendar renders as a table. This centers the table. */
         .col-md-6 table {
             margin-left: auto;
             margin-right: auto;
+        }
+        /* Optional: Add some padding to calendar cells for better clickability */
+        .asp-calendar-wrapper td {
+            padding: 5px;
         }
 
 
@@ -115,35 +112,5 @@
         .report-btn:hover {
             background-color: #f0f0f0; /* Light grey on hover */
         }
-        
-        /* Clear previous auto-styles which are less flexible */
-        .auto-style1, .auto-style3 {
-            /* These are replaced by .report-btn */
-            margin-left: 0 !important; /* Resetting any previous specific margins */
-        }
-        .auto-style2 {
-            /* This div seems redundant for layout; will remove its specific margin if unused */
-            margin-left: 0 !important; /* Resetting */
-            height: auto !important; /* Allow content to define height */
-        }
-
-        /* Generic form control and flexbox styles (keep for consistency) */
-        .form-control {
-            display: block;
-            width: 100%;
-            padding: .375rem .75rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
-            background-clip: padding-box;
-            border: 1px solid #ced4da;
-            border-radius: .25rem;
-            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-        }
-        /* No longer using d-flex and align-items-end for dropdowns in this specific context */
-        /* but keeping them here for completeness if other parts of site use them. */
-        .d-flex { display: flex !important; }
-        .align-items-end { align-items: flex-end !important; }
     </style>
 </asp:Content>
