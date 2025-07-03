@@ -4,37 +4,34 @@
 <%@ Register assembly="CrystalDecisions.Web, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" namespace="CrystalDecisions.Web" tagprefix="CR" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+    <h2>Report Center</h2>
     <div class="container mt-5">
-        <h2>Report Center</h2>
         <p>Select a report type from the given below Report types to view data. Reports will be filtered by your plant location.</p>
 
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <label for="ddlMonth">Select Month:</label>
-                <asp:DropDownList ID="ddlMonth" runat="server" CssClass="form-control"></asp:DropDownList>
-            </div>
-            <div class="col-md-3">
-                <label for="ddlYear">Select Year:</label>
-                <asp:DropDownList ID="ddlYear" runat="server" CssClass="form-control"></asp:DropDownList>
-            </div>
             <%-- Optional: A button to explicitly apply filters if you don't want it tied to report buttons --%>
             <%-- <div class="col-md-3 d-flex align-items-end">
                 <asp:Button ID="btnApplyFilter" runat="server" Text="Apply Filter" OnClick="btnApplyFilter_Click" CssClass="btn btn-primary" />
             </div> --%>
-        </div>
+    
+        <asp:Calendar ID="Calendar1" runat="server"></asp:Calendar>
+        <asp:Calendar ID="Calendar2" runat="server"></asp:Calendar>
+    
 
+            <hr />
+            <br/>
         <ol>
-            <li><asp:Button ID="Button1" runat="server" CssClass="auto-style1" OnClick="Button1_Click" Text="Affected IP Report" Width="175px" Height="26px" /></li>
-            <li><asp:Button ID="Button2" runat="server" CssClass="auto-style3" OnClick="Button2_Click" Text="SEBI Report" Width="175px" Height="26px" /></li>
-            <li><asp:Button ID="Button3" runat="server" CssClass="auto-style3" OnClick="Button3_Click" Text="Malicious IP Report" Width="175px" Height="26px" /></li>
-            <li><asp:Button ID="Button4" runat="server" CssClass="auto-style3" OnClick="Button4_Click" Text="Affected Ports Report" Width="175px" Height="26px" /></li>
-            <li><asp:Button ID="Button5" runat="server" CssClass="auto-style3" OnClick="Button5_Click" Text="Action Pending Report" Width="175px" Height="26px" /></li>
-            <li><asp:Button ID="Button6" runat="server" CssClass="auto-style3" OnClick="Button6_Click" Text="Closed Incidents Report" Width="175px" Height="26px" /></li>
+            <li><asp:Button ID="Button1" runat="server" CssClass="auto-style1" OnClick="Button1_Click" Text="Affected IP Report" Width="200px" Height="26px" /></li>
+            <li><asp:Button ID="Button2" runat="server" CssClass="auto-style3" OnClick="Button2_Click" Text="SEBI Report" Width="200px" Height="26px" /></li>
+            <li><asp:Button ID="Button3" runat="server" CssClass="auto-style3" OnClick="Button3_Click" Text="Malicious IP Report" Width="200px" Height="26px" /></li>
+            <li><asp:Button ID="Button4" runat="server" CssClass="auto-style3" OnClick="Button4_Click" Text="Affected Ports Report" Width="200px" Height="26px" /></li>
+            <li><asp:Button ID="Button5" runat="server" CssClass="auto-style3" OnClick="Button5_Click" Text="Action Pending Report" Width="200px" Height="26px" /></li>
+            <li><asp:Button ID="Button6" runat="server" CssClass="auto-style3" OnClick="Button6_Click" Text="Closed Incidents Report" Width="200px" Height="26px" /></li>
+            <li><asp:Button ID="Button7" runat="server" CssClass="auto-style3" OnClick="Button7_Click" Text="Consolidated Report" Width="200px" Height="26px" /></li>
         </ol>
         <br />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <br />
-
+    </div>
         <div class="auto-style2">
             <br />
             <br />
