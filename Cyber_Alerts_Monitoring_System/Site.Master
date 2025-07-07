@@ -1,33 +1,30 @@
 <%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="CyberAlert.SiteMaster" %>
 
 <!DOCTYPE html>
-
 <html lang="en">
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> - Cyber Alerts Monitoring System</title>
+    <title><%: Page.Title %> - CyberAlert</title>
 
-    <%-- Bootstrap CSS CDN Link (for Bootstrap 5.3.3) --%>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <asp:PlaceHolder runat="server">
+        <%: Styles.Render("~/Content/css") %>
+        <%: Scripts.Render("~/bundles/modernizr") %>
+    </asp:PlaceHolder>
 
-    <%-- Your Custom Stylesheet (ensure this path is correct if you have custom CSS) --%>
-    <link href="~/style.css" rel="stylesheet" />
-
-    <%-- Favicon (keep this if you have a favicon.ico in your project root) --%>
+    <webopt:BundleReference runat="server" Path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
-    <%-- ContentPlaceHolder for page-specific head content --%>
-    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
-    </asp:ContentPlaceHolder>
 </head>
 <body>
     <form runat="server">
         <asp:ScriptManager runat="server">
             <Scripts>
-                <%-- ASP.NET Web Forms default scripts --%>
+                <%--To learn more about ScriptManager see https://go.microsoft.com/fwlink/?LinkID=117951--%>
+                <%--Framework Scripts--%>
                 <asp:ScriptReference Name="MsAjaxBundle" />
-                <asp:ScriptReference Name="jquery" /> <%-- Keep jQuery, as some ASP.NET components might use it --%>
+                <asp:ScriptReference Name="jquery" />
+                <asp:ScriptReference Name="bootstrap" />
                 <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
                 <asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
                 <asp:ScriptReference Name="MenuStandards.js" Assembly="System.Web" Path="~/Scripts/WebForms/MenuStandards.js" />
@@ -37,58 +34,57 @@
                 <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
                 <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
                 <asp:ScriptReference Name="WebFormsBundle" />
-                <%-- Site Scripts (if you have any custom JS files) --%>
+                <%--Site Scripts--%>
             </Scripts>
         </asp:ScriptManager>
 
-        <%-- Bootstrap 5 Navbar Structure --%>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" runat="server" href="~/">Cyber Alerts Monitor</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" runat="server" href="~/">CyberAlert</a>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto"> <%-- 'me-auto' pushes items to the left, 'ms-auto' to the right --%>
+                <%-- ADDED ID AND RUNAT="SERVER" HERE --%>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarLinksDiv" runat="server">
+                    <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/Default.aspx">Home</a>
+                            <a class="nav-link" runat="server" href="~/Default">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/CyberAlertsCentral.aspx">Cyber Alerts (CO)</a>
+                            <a class="nav-link" runat="server" href="~/About">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/CyberAlertsLocal.aspx">Cyber Alerts (Plant)</a>
+                            <a class="nav-link" runat="server" href="~/Contact">Contact</a>
                         </li>
+                        <%-- Your CyberAlert specific navigation --%>
                         <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/Reports.aspx">Reports</a>
+                            <a class="nav-link" runat="server" href="~/CyberAlertsCentral">Central Form</a>
                         </li>
                          <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/Login.aspx">Logout</a>
+                            <a class="nav-link" runat="server" href="~/Reports">Reports</a>
+                        </li>
+                        <%-- Logout Link/Button - Also give it an ID and runat="server" if you want to hide it separately --%>
+                        <li class="nav-item ms-auto">
+                            <asp:LinkButton ID="LogoutLink" runat="server" CssClass="nav-link" OnClick="Logout_Click">Logout</asp:LinkButton>
                         </li>
                     </ul>
-                    <%-- If you want login/logout to be on the far right, you'd create another ul here with ms-auto --%>
-                    <%-- Example:
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/Login.aspx">Login</a>
-                        </li>
-                    </ul>
-                    --%>
                 </div>
             </div>
         </nav>
 
-        <div class="container body-content py-4"> <%-- Added py-4 for top/bottom padding on content --%>
+        <div class="container body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
             <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - Cyber Alerts Monitoring System</p>
+                <p>&copy; <%: DateTime.Now.Year %> - CyberAlert</p>
             </footer>
         </div>
-
-        <%-- Bootstrap JavaScript CDN Link (for Bootstrap 5.3.3) --%>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </form>
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/jquery") %>
+        <%: Scripts.Render("~/bundles/bootstrap") %>
+        <%: Scripts.Render("~/bundles/WebFormsJs") %>
+    </asp:PlaceHolder>
 </body>
 </html>
