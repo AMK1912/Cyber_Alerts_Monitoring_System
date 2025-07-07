@@ -12,45 +12,47 @@ namespace CyberAlert
         {
             get
             {
-                // Default to true if not set (navbar is usually visible)
                 if (ViewState["ShowNavBar"] == null)
                     return true;
                 return (bool)ViewState["ShowNavBar"];
             }
             set
             {
-                ViewState["ShowNavBar"] = value; // Store the state
+                ViewState["ShowNavBar"] = value;
 
-                // Set visibility of the div containing navigation links
-                // 'navbarLinksDiv' is the ID we added in Site.Master
-                if (navbarLinksDiv != null) // Check if the control exists
+                // IMPORTANT: 'navbarNav' must have runat="server" in Site.Master HTML
+                if (navbarNav != null)
                 {
-                    navbarLinksDiv.Visible = value;
+                    navbarNav.Visible = value;
                 }
 
-                // Also control the visibility of the logout link if it's separate
-                // 'LogoutLink' is the ID of your logout LinkButton
-                if (LogoutLink != null) // Check if the control exists
-                {
-                    LogoutLink.Visible = value;
-                }
+                // If you want to hide the "Logout" link specifically when navbar is hidden,
+                // you would need to make it an ASP.NET server control (e.g., LinkButton)
+                // and give it an ID, then add similar logic here.
+                // Since it's currently a simple <a> tag, it will hide/show with its parent div.
+                // If you re-add a LogoutLink LinkButton:
+                // if (LogoutLink != null)
+                // {
+                //     LogoutLink.Visible = value;
+                // }
             }
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // No specific logic needed here for navbar visibility,
-            // as the 'ShowNavBar' property's setter handles it when called from content pages.
-            // If you had other dynamic elements, they'd go here.
+            // Nothing to change here for navbar visibility based on your latest Site.Master HTML.
         }
 
+        // If you had a Logout LinkButton and an OnClick event, keep this.
+        // If it's just an <a> tag now that redirects to Login.aspx, you might remove this event.
+        // Assuming your previous Logout_Click was for a LinkButton, you'll need it if you revert it.
+        // If it's a simple <a> tag directly linking to Login.aspx, this method won't be called for logout.
+        // If you want server-side logout:
         protected void Logout_Click(object sender, EventArgs e)
         {
-            // Your logout logic here
             Session.Clear();
             Session.Abandon();
-            // Clear authentication cookie if you are using Forms Authentication
-            // FormsAuthentication.SignOut();
+            // FormsAuthentication.SignOut(); // If you use FormsAuthentication
             Response.Redirect("~/Login.aspx");
         }
     }
