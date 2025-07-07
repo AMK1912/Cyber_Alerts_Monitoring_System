@@ -1,62 +1,121 @@
-// Login.aspx.cs
 using System;
+using System.Configuration;
+using System.Data.OleDb;
+using System.Web.Security;
 using System.Web.UI;
-using System.Web.Security; // If you're using FormsAuthentication
 
-namespace CyberAlert
+public partial class Login : Page
 {
-    public partial class Login : Page
-    {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            // Cast the Master property to your specific Master Page type
-            // This allows you to access the public properties/methods of your Master Page.
-            if (this.Master is SiteMaster masterPage)
-            {
-                masterPage.ShowNavBar = false; // Set to false to hide the navbar for Login.aspx
-            }
+    private OleDbConnection conn;
 
-            // Your existing Page_Load logic for the Login page
-            // e.g., for setting focus or checking for return URLs
-            if (!IsPostBack)
-            {
-                // Optionally clear session or ensure user is logged out upon reaching login page
-                // Session.Clear();
-                // Session.Abandon();
-                // FormsAuthentication.SignOut();
-            }
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        conn = new OleDbConnection(ConfigurationManager.ConnectionStrings["constring"].ToString());
+        if (!IsPostBack)
+        {
+            txtusername.Focus();
+        }
+    }
+
+    protected void btnlogin_Click(object sender, EventArgs e)
+    {
+        message.Text = ""; // Clear any previous error message
+
+        if (string.IsNullOrEmpty(txtusername.Text) || string.IsNullOrEmpty(txtpassword.Text))
+        {
+            message.Text = "Please enter both employee code and password.";
+            return;
         }
 
-        protected void btnLogin_Click(object sender, EventArgs e)
+        try
         {
-            // ... Your existing authentication logic here ...
+            conn.Open();
+            string sql = "SELECT empcode, password, CENTER FROM emp_cyber_alert WHERE empcode = ?";
+            OleDbCommand cmd = new OleDbCommand(sql, conn);
+            cmd.Parameters.AddWithValue("?", txtusername.Text);
 
-            // Example of successful login (replace with your actual authentication)
-            bool isAuthenticated = true; // Placeholder: Replace with actual authentication check
-            if (txtUsername.Text == "test" && txtPassword.Text == "password") // Example credentials
+            OleDbDataReader dr = cmd.ExecuteReader();
+            if (dr.Read())
             {
-                 // Store user details in session
-                Session["EmpCode"] = "E123";
-                Session["Center"] = "CO"; // Or "Plant" based on user's role/location
+                string retrievedUsername = dr["empcode"].ToString();
+                string retrievedPassword = dr["password"].ToString();
 
-                // Redirect to a secure page after successful login
-                Response.Redirect("~/Default.aspx"); // Or wherever you want to send them after login
+                string retrievedCenter = string.Empty; // Initialize to empty string
+
+                // --- DEEP DEBUGGING: List all columns in the DataReader ---
+                System.Diagnostics.Debug.WriteLine("--- DataReader Columns ---");
+                for (int i = 0; i < dr.FieldCount; i++)
+                {
+                    string columnName = dr.GetName(i);
+                    object columnValue = dr.GetValue(i);
+                    System.Diagnostics.Debug.WriteLine($"Column Index: {i}, Name: [{columnName}], Value: [{columnValue ?? "NULL"}]");
+                }
+                System.Diagnostics.Debug.WriteLine("--------------------------");
+
+
+                try
+                {
+                    // Attempt to get the 'CENTER' value safely and robustly.
+                    // Check for DBNull.Value.
+                    // Use as string to avoid issues if ToString() is problematic for certain data types.
+                    // Then Trim and ToUpper.
+                    if (dr["CENTER"] != DBNull.Value)
+                    {
+                        retrievedCenter = dr["CENTER"] as string; // Try direct cast to string
+                        if (retrievedCenter == null) // If not a string, try ToString()
+                        {
+                            retrievedCenter = dr["CENTER"].ToString();
+                        }
+                        retrievedCenter = retrievedCenter.Trim(); // Trim any leading/trailing whitespace
+                        retrievedCenter = retrievedCenter.ToUpper(); // Convert to uppercase for consistent comparison
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("ERROR: Exception when trying to retrieve 'CENTER' by name (robust method): " + ex.Message);
+                    retrievedCenter = string.Empty; // Ensure it's empty if an error occurs
+                }
+
+                // --- CRITICAL DEBUGGING POINT 1 ---
+                System.Diagnostics.Debug.WriteLine("Login.aspx.cs - Value retrieved for 'CENTER' from DB (processed): [" + retrievedCenter + "]");
+
+
+                // INSECURE: Directly compare plain-text passwords. DO NOT DO THIS IN PRODUCTION.
+                if (txtpassword.Text == retrievedPassword)
+                {
+                    // Authentication successful
+                    Session["EmpCode"] = retrievedUsername;
+                    Session["Center"] = retrievedCenter; // Set the session variable
+
+                    // --- CRITICAL DEBUGGING POINT 2 ---
+                    System.Diagnostics.Debug.WriteLine("Login.aspx.cs - Session['Center'] SET TO: [" + Session["Center"] + "]");
+
+
+                    FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false);
+                    return;
+                }
+                else
+                {
+                    message.Text = "Invalid username or password.";
+                }
             }
             else
             {
-                // Handle failed login
-                lblLoginMessage.Text = "Invalid username or password.";
-                lblLoginMessage.CssClass = "text-danger";
-                isAuthenticated = false; // Set to false for failed login
+                message.Text = "Invalid username or password."; // No user found
             }
-
-            if (isAuthenticated)
+            dr.Close();
+        }
+        catch (OleDbException ex)
+        {
+            message.Text = "Database error: " + ex.Message;
+            System.Diagnostics.Trace.WriteLine("DB Error: " + ex.ToString());
+        }
+        finally
+        {
+            if (conn.State == System.Data.ConnectionState.Open)
             {
-                // The master page property will automatically revert to default (true)
-                // when redirecting to Default.aspx or any other page.
-                // No need to set masterPage.ShowNavBar = true here.
+                conn.Close();
             }
         }
-        // ... other methods ...
     }
 }
