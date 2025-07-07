@@ -1,4 +1,4 @@
-<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
+<%@ Page Title="Cyber Alerts Form" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
     CodeBehind="CyberAlertsCentral.aspx.cs" Inherits="CyberAlert.CyberAlertsCentral" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
@@ -89,12 +89,14 @@
                         CssClass="text-danger"></asp:CompareValidator>
                 </div>
                 <div class="col-md-6">
-                    <label for="txtPertainingToUnitCentral" class="form-label">Pertaining To Unit:</label>
-                    <asp:TextBox ID="txtPertainingToUnitCentral" runat="server" CssClass="form-control"
-                        MaxLength="50"></asp:TextBox>
+                    <label for="ddlPertainingToUnit" class="form-label">Pertaining To Unit:</label>
+                    <%-- Replaced TextBox with DropDownList --%>
+                    <asp:DropDownList ID="ddlPertainingToUnit" runat="server" CssClass="form-select"></asp:DropDownList>
+                    <%-- Updated Validator to point to the new DropDownList and use InitialValue --%>
                     <asp:RequiredFieldValidator ID="PertainingToUnitRequired" runat="server"
-                        ControlToValidate="txtPertainingToUnitCentral"
-                        ErrorMessage="Pertaining To Unit is required" CssClass="text-danger"></asp:RequiredFieldValidator>
+                        ControlToValidate="ddlPertainingToUnit"
+                        ErrorMessage="Pertaining To Unit is required" CssClass="text-danger"
+                        InitialValue=""></asp:RequiredFieldValidator>
                 </div>
             </div>
 
@@ -177,8 +179,8 @@
             </div>
             <div class="mb-3">
                 <label for="txtRepliedSenderCentral" class="form-label">Replied to Sender:</label>
-                <asp:TextBox ID="txtRepliedSenderCentral" runat="server" TextMode="DateTimeLocal" <%-- Changed to DateTimeLocal --%>
-                    CssClass="form-control" MaxLength="250"></asp:TextBox>
+                <asp:TextBox ID="txtRepliedSenderCentral" runat="server" TextMode="DateTimeLocal"
+                    CssClass="form-control"></asp:TextBox> <%-- Removed MaxLength as it's a date field --%>
                 <asp:RequiredFieldValidator ID="RequiredFieldValidator9" runat="server"
                     ControlToValidate="txtRepliedSenderCentral" ErrorMessage="Replied to Sender is required"
                     CssClass="text-danger"></asp:RequiredFieldValidator>
@@ -193,4 +195,3 @@
         </form>
     </div>
 </asp:Content>
-
