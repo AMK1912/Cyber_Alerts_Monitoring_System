@@ -5,7 +5,7 @@
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> - CyberAlert</title>
+    <title><%: Page.Title %>CyberAlert</title>
 
     <%-- REMOVED ASP.NET OPTIMIZATION PLACEHOLDER --%>
     <%-- Replaced with direct <link> tags for CSS --%>
@@ -13,6 +13,8 @@
     <link href="~/Content/site.css" rel="stylesheet" />
     <%-- For favicon.ico --%>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    
+    <asp:ContentPlaceHolder ID="headcontent" runat="server"></asp:ContentPlaceHolder>
 
 </head>
 <body>
@@ -36,37 +38,42 @@
             </Scripts>
         </asp:ScriptManager>
 
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" runat="server" href="~/">CyberAlert</a>
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" runat="server" href="~/">Cyber Alerts Monitor</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarLinksDiv" runat="server">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto"> <%-- 'me-auto' pushes items to the left, 'ms-auto' to the right --%>
                         <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/Default">Home</a>
+                            <a class="nav-link" runat="server" href="~/Default.aspx">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/About">About</a>
+                            <a class="nav-link" runat="server" href="~/CyberAlertsCentral.aspx">Cyber Alerts (CO)</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/Contact">Contact</a>
+                            <a class="nav-link" runat="server" href="~/CyberAlertsLocal.aspx">Cyber Alerts (Plant)</a>
                         </li>
-                        <%-- Your CyberAlert specific navigation --%>
                         <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/CyberAlertsCentral">Central Form</a>
+                            <a class="nav-link" runat="server" href="~/Reports.aspx">Reports</a>
                         </li>
                          <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/Reports">Reports</a>
-                        </li>
-                        <li class="nav-item ms-auto">
-                            <asp:LinkButton ID="LogoutLink" runat="server" CssClass="nav-link" OnClick="Logout_Click">Logout</asp:LinkButton>
+                            <a class="nav-link" runat="server" href="~/Login.aspx">Logout</a>
                         </li>
                     </ul>
+                    <%-- If you want login/logout to be on the far right, you'd create another ul here with ms-auto --%>
+                    <%-- Example:
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" runat="server" href="~/Login.aspx">Login</a>
+                        </li>
+                    </ul>
+                    --%>
                 </div>
             </div>
         </nav>
+
 
         <div class="container body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
