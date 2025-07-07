@@ -1,8 +1,9 @@
 using System;
 using System.Configuration;
 using System.Data.OleDb;
-using System.Web.Security;
+using System.Web.Security; // Required for FormsAuthentication
 using System.Web.UI;
+using CyberAlert; // IMPORTANT: Add this using directive to access your SiteMaster class
 
 public partial class Login : Page
 {
@@ -10,10 +11,30 @@ public partial class Login : Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
+        // Initialize connection here, as it's used in btnlogin_Click
         conn = new OleDbConnection(ConfigurationManager.ConnectionStrings["constring"].ToString());
+
         if (!IsPostBack)
         {
             txtusername.Focus();
+
+            // --- IMPORTANT: Hide the navbar on the login page ---
+            // Cast the Master property to your specific Master Page type (CyberAlert.SiteMaster)
+            if (this.Master is SiteMaster masterPage)
+            {
+                masterPage.ShowNavBar = false; // Set to false to hide the navbar
+            }
+            // --- End Navbar Hiding Logic ---
+
+            // Optional: Ensure user is logged out upon reaching login page
+            // This prevents issues if a user navigates directly to Login.aspx while still authenticated
+            if (Context.User.Identity.IsAuthenticated)
+            {
+                FormsAuthentication.SignOut();
+                Session.Clear();
+                Session.Abandon();
+                Response.Redirect(Request.RawUrl); // Redirect back to refresh the state
+            }
         }
     }
 
@@ -81,6 +102,7 @@ public partial class Login : Page
 
 
                 // INSECURE: Directly compare plain-text passwords. DO NOT DO THIS IN PRODUCTION.
+                // You should use password hashing (e.g., bcrypt, PBKDF2) for secure production applications.
                 if (txtpassword.Text == retrievedPassword)
                 {
                     // Authentication successful
@@ -90,9 +112,10 @@ public partial class Login : Page
                     // --- CRITICAL DEBUGGING POINT 2 ---
                     System.Diagnostics.Debug.WriteLine("Login.aspx.cs - Session['Center'] SET TO: [" + Session["Center"] + "]");
 
-
+                    // FormsAuthentication handles the redirect and cookie creation.
+                    // It will redirect to the return URL if specified, otherwise to Default.aspx.
                     FormsAuthentication.RedirectFromLoginPage(retrievedUsername, false);
-                    return;
+                    return; // Important: Exit the method after redirecting
                 }
                 else
                 {
@@ -109,6 +132,11 @@ public partial class Login : Page
         {
             message.Text = "Database error: " + ex.Message;
             System.Diagnostics.Trace.WriteLine("DB Error: " + ex.ToString());
+        }
+        catch (Exception ex) // Catch any other unexpected errors
+        {
+            message.Text = "An unexpected error occurred during login: " + ex.Message;
+            System.Diagnostics.Trace.WriteLine("General Error in login: " + ex.ToString());
         }
         finally
         {
